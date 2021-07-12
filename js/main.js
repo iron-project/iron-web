@@ -9,18 +9,19 @@ $(document).ready(function () {
         html = `
                         <tr>
                             <td>
-                                <button class="uk-button uk-button-text uk-button-small iron-back">
-                                    <span uk-icon="reply"></span>
-                                </button>
+                                <button class="uk-button uk-button-text uk-button-small iron-back">返回</button>
                             </td>
                             <td></td>
-                            <td class="uk-text-nowrap">
-                                <button class="uk-button uk-button-default uk-width-1-3 uk-button-small">
-                                    <span uk-icon="plus"></span>
-                                </button>
-                                <button class="uk-button uk-button-default uk-width-1-3 uk-button-small">
-                                    <span uk-icon="upload"></span>
-                                </button>
+                            <td class="uk-flex uk-flex-left uk-margin-small-right">
+                                <button id="iron-mkdir" class="uk-button uk-button-text uk-button-small">新建</button>
+                                <div uk-dropdown="mode: click; pos: top-justify">
+                                    <div class="uk-flex">
+                                        <input id="iron-new-folder" class="uk-input" type="text" placeholder="folder name">
+                                        <button class="uk-button-primary uk-button-small">OK</button>
+                                    </div>
+                                </div>
+                                <div class="uk-padding-small"></div>
+                                <button id="iron-upload" class="uk-button uk-button-text uk-button-small">上传</button>
                             </td>
                         </tr>
         `
@@ -28,10 +29,8 @@ $(document).ready(function () {
                         <tr>
                             <td><span uk-icon="folder"></span></td>
                             <td class="uk-text-truncate iron-folder">_folder_</td>
-                            <td class="uk-text-nowrap">
-                                <button class="uk-button uk-button-default uk-width-1-3 uk-button-small">
-                                    <span uk-icon="minus"></span>
-                                </button>
+                            <td class="uk-flex uk-flex-left uk-margin-small-right">
+                                <button class="uk-button uk-button-text uk-button-small">删除</button>
                             </td>
                         </tr>
         `
@@ -39,13 +38,10 @@ $(document).ready(function () {
                         <tr>
                             <td><span uk-icon="file"></span></td>
                             <td class="uk-text-truncate">_file_</td>
-                            <td class="uk-text-nowrap">
-                                <button class="uk-button uk-button-default uk-width-1-3 uk-button-small">
-                                    <span uk-icon="minus"></span>
-                                </button>
-                                <button class="uk-button uk-button-default uk-width-1-3 uk-button-small">
-                                    <span uk-icon="download"></span>
-                                </button>
+                            <td class="uk-flex uk-flex-left uk-margin-small-right">
+                                <button class="uk-button uk-button-text uk-button-small">删除</button>
+                                <div class="uk-padding-small"></div>
+                                <button class="uk-button uk-button-text uk-button-small iron-download">下载</button>
                             </td>
                         </tr>
         `
@@ -58,6 +54,7 @@ $(document).ready(function () {
         tbody.html(html)
         setup_back()
         setup_open_folder()
+        setup_download()
     }
 
     function goto_folder() {
@@ -104,6 +101,30 @@ $(document).ready(function () {
             var path = $(input).val()
             $(input).val(pardir(path))
             goto_folder()
+        })
+    }
+
+    function download_file(uri, name) {
+        var fxhr = new XMLHttpRequest();
+        fxhr.open('GET', uri, true);
+        fxhr.responseType = 'blob';
+        fxhr.onload = function (e) {
+            download(e.target.response, name, 'application/octet-stream');
+        };
+        fxhr.send();
+    }
+
+    function setup_download() {
+        $('.iron-download').click(function (e) {
+            var file = $(this).parent().prev().text()
+            var current_dir = $(input).val()
+            var uri = host + '/files/get?path='
+            if (current_dir == '/') {
+                uri += encodeURI(current_dir + file)
+            } else {
+                uri += encodeURI(current_dir + '/' + file)
+            }
+            download_file(uri, file)
         })
     }
 
