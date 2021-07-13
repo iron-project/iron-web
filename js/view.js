@@ -1,11 +1,11 @@
 function refresh() {
-    request('GET', make_url('/directories/readdir?path=', $('#iron-input').val()),
+    request('GET', make_url('/directories/readdir?path=', $('#iron-input').val(), ''),
         function (json) {
-            refresh_view(json['dirs', json['files']])
+            refresh_view(json['dirs'], json['files'])
         },
         function (xhr) {
             UIkit.notification({
-                message: '访问服务端失败！',
+                message: '刷新失败，访问服务端失败！',
                 pos: 'bottom-center',
                 status: 'danger'
             })
@@ -80,8 +80,8 @@ function refresh_view(dirs, files) {
 
     bind_click_open()
     bind_click_back()
+    bind_click_mkdir()
     bind_click_rmdir()
-
     bind_click_upload()
     bind_click_download()
 }

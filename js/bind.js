@@ -77,7 +77,7 @@ function bind_click_upload() {
         name: 'file',
         url: host,
         beforeAll: function () {
-            this.url = make_url('/files/put?path', $(input).val(), arguments[1][0].name)
+            this.url = make_url('/files/put?path=', $(input).val(), arguments[1][0].name)
         },
         progress: function (e) {
             var load = parseInt(e.loaded * 100 / e.total)

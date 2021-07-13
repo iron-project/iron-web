@@ -7,7 +7,8 @@ function request(type, url, success, error) {
         if (XMLHttpRequest.DONE == state && 200 == status) {
             json = JSON.parse(xhr.responseText)['data']
             success(json)
-        } else {
+        }
+        if (XMLHttpRequest.DONE == state && 200 != status) {
             error(xhr)
         }
     }
